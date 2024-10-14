@@ -1,21 +1,29 @@
-Repository Structure
-1. LightCurveData/
-This folder contains Python scripts designed to fetch data from the Kepler Light Curve dataset efficiently using parallel processing. It also includes modules for cleaning and preprocessing the data, tailored to various star properties.
+# StarsPrediction
 
-2. Star&Beyond/
-This folder provides the tools necessary for splitting and preparing the data for neural network models. Inside, you'll find:
+This repository provides tools and scripts for efficiently processing Kepler Light Curve data and training machine learning models to predict star properties using neural networks. The structure is designed to streamline the data retrieval, preparation, and model training processes.
 
-1D CNN and RCNN Models: Code to train your model using 1D Convolutional Neural Networks and Recurrent Convolutional Neural Networks.
-Transfer Learning: Leverage pre-trained models for transfer learning.
-Automated Grid Search: Easily experiment with hyperparameter tuning using Grid Search for different time periods (27 or 97 days of data).
-Sample Data: A small dataset is included for quick training and testing purposes.
+## Repository Structure
 
-Getting Started
-Clone this repository:
+- **LightCurveData/**  
+  This directory contains Python scripts optimized for efficient data retrieval from the Kepler Light Curve dataset using parallel processing techniques. It also includes modules for data cleaning and preprocessing, specifically tailored to different star characteristics.
 
+- **Star&Beyond/**  
+  This folder houses the tools required to split and prepare the data for use in neural network models. Key features include:
+  
+  - **1D CNN and RCNN Models**: Scripts for training models using 1D Convolutional Neural Networks (CNNs) and Recurrent Convolutional Neural Networks (RCNNs).
+  - **Transfer Learning**: Pre-trained models are available to facilitate transfer learning for enhanced performance.
+  - **Automated Grid Search**: Simplifies hyperparameter tuning by utilizing Grid Search across various time periods (e.g., 27-day or 97-day data windows).
+  - **Sample Data**: A small sample dataset is provided for quick model training and testing.
+
+## Getting Started
+
+To get started, clone this repository:
+
+```bash
 git clone https://github.com/YourUsername/StarsPrediction.git
+```
+## Contact
 
+For any questions, feedback, or collaboration inquiries, please feel free to reach out via email:
 
-Contact
-If you have any questions or suggestions, feel free to reach out via email at:
-shahriyarnasa@gmail.com
+[shahriyarnasa@gmail.com](mailto:shahriyarnasa@gmail.com)
