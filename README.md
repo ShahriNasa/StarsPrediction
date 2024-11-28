@@ -20,7 +20,7 @@ This repository provides tools and scripts for efficiently processing Kepler Lig
 To get started, clone this repository:
 
 ```bash
-git clone https://github.com/YourUsername/StarsPrediction.git
+git clone https://github.com/Shahri70/StarsPrediction.git
 ```
 ## Contact
 
