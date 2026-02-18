@@ -1,0 +1,17 @@
+services:
+  backend:
+    image: shahrinasa/stellarscope-backend:1.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - STELLARSCOPE_DB=/app/data/stellarscope.db
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    image: shahrinasa/stellarscope-frontend:1.0
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend

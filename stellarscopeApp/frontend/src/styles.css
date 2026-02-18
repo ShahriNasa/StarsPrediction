@@ -1,0 +1,38 @@
+:root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+body { margin: 0; color: #e8eefc; }
+
+.page{
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(11,16,32,0.92), rgba(11,16,32,0.92)),
+    url("./assets/jamesw.PNG");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+* { box-sizing: border-box; }
+/* page transition container */
+.view {
+  position: relative;
+}
+
+/* base view */
+.viewPane {
+  transition: opacity 220ms ease, transform 220ms ease;
+  will-change: opacity, transform;
+}
+
+/* when hidden */
+.viewPane--hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+}
+
+/* when visible */
+.viewPane--visible {
+  opacity: 1;
+  transform: translateY(0px);
+}
