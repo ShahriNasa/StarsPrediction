@@ -266,9 +266,11 @@ The provided Docker workflow ensures:
 
 ---
 
-# 📜 License
+## 📜 License
 
-Specify your license here (MIT, Apache 2.0, etc.).
+This project is licensed under the Apache License 2.0.
+See the LICENSE file for details.
+
 
 ---
 
