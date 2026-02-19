@@ -276,7 +276,6 @@ This project is licensed under the [Apache License 2.0](LICENSE)
 
 For collaboration, research inquiries, or technical questions:
 
-**Shahriyar Nasa**
 📩 [shahriyarnasa@gmail.com](mailto:shahriyarnasa@gmail.com)
 
 ---
