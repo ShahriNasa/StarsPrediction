@@ -1,8 +1,17 @@
 :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-body { margin: 0; color: #e8eefc; }
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  color: #e8eefc;
+  background: #0b1020;
+  overflow-x: hidden;
+}
 
 .page{
   min-height: 100vh;
+  overflow-x: clip;
   background:
     linear-gradient(180deg, rgba(11,16,32,0.92), rgba(11,16,32,0.92)),
     url("./assets/jamesw.PNG");
@@ -10,16 +19,17 @@ body { margin: 0; color: #e8eefc; }
   background-position: center;
   background-attachment: fixed;
 }
-* { box-sizing: border-box; }
-/* page transition container */
+
 .view {
   position: relative;
+  background: transparent;
 }
 
 /* base view */
 .viewPane {
   transition: opacity 220ms ease, transform 220ms ease;
   will-change: opacity, transform;
+  background: transparent;
 }
 
 /* when hidden */
@@ -27,12 +37,14 @@ body { margin: 0; color: #e8eefc; }
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
-  height: 0;
-  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  width: 100%;
 }
 
 /* when visible */
 .viewPane--visible {
   opacity: 1;
   transform: translateY(0px);
+  position: relative;
 }

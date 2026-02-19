@@ -105,6 +105,26 @@ class PredictRequest(BaseModel):
 
 
 # -------------------------
+# Request schema (Form /predict2)
+# -------------------------
+class BulkDeleteRunsRequest(BaseModel):
+    run_ids: List[int]
+
+# -------------------------
+# Request schema (Form /delete_stars)
+# -------------------------
+class StarDeleteItem(BaseModel):
+    run_id: int
+    star_file_id: int
+
+# -------------------------
+# Request schema (Form /delete_stars_bulk)
+# -------------------------
+class BulkDeleteStarsRequest(BaseModel):
+    stars: List[StarDeleteItem]
+
+
+# -------------------------
 # Helpers (model/scaler decode)
 # -------------------------
 def load_model_from_base64(encoded_model_data: str, device: torch.device):
@@ -151,6 +171,33 @@ def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _delete_starfile_cascade(session: Session, star_file_id: int) -> None:
+    # delete children first
+    preds = session.exec(select(Prediction).where(Prediction.star_file_id == star_file_id)).all()
+    for p in preds:
+        session.delete(p)
+
+    errs = session.exec(select(PredictionError).where(PredictionError.star_file_id == star_file_id)).all()
+    for e in errs:
+        session.delete(e)
+
+    star = session.get(StarFile, star_file_id)
+    if star:
+        session.delete(star)
+
+
+def _delete_run_cascade(session: Session, run_id: int) -> int:
+    run = session.get(Run, run_id)
+    if not run:
+        return 0
+
+    stars = session.exec(select(StarFile).where(StarFile.run_id == run_id)).all()
+    for s in stars:
+        _delete_starfile_cascade(session, int(s.id))
+
+    session.delete(run)
+    return 1
+
 # -------------------------
 # API
 # -------------------------
@@ -188,7 +235,48 @@ def list_runs(limit: int = 50, offset: int = 0):
             for r in runs
         ]
 
+@app.post("/runs/bulk-delete")
+def bulk_delete_runs(req: BulkDeleteRunsRequest):
+    if not req.run_ids:
+        raise HTTPException(status_code=400, detail="run_ids is empty")
 
+    deleted = 0
+    with Session(engine) as session:
+        try:
+            for rid in req.run_ids:
+                deleted += _delete_run_cascade(session, int(rid))
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise HTTPException(status_code=500, detail=f"Delete failed: {e}")
+
+    return {"deleted_runs": deleted}
+
+@app.post("/stars/bulk-delete")
+def bulk_delete_stars(req: BulkDeleteStarsRequest):
+    if not req.stars:
+        raise HTTPException(status_code=400, detail="stars is empty")
+
+    deleted = 0
+    with Session(engine) as session:
+        try:
+            for item in req.stars:
+                # safety: ensure star belongs to the given run_id
+                star = session.get(StarFile, int(item.star_file_id))
+                if not star:
+                    continue
+                if int(star.run_id) != int(item.run_id):
+                    continue
+
+                _delete_starfile_cascade(session, int(star.id))
+                deleted += 1
+
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise HTTPException(status_code=500, detail=f"Delete failed: {e}")
+
+    return {"deleted_stars": deleted}
 @app.get("/runs/{run_id}")
 def get_run(run_id: int):
     with Session(engine) as session:
@@ -227,7 +315,25 @@ def get_run(run_id: int):
             "stars": out_stars,
         }
 
+@app.delete("/runs/{run_id}")
+def delete_run(run_id: int):
+    with Session(engine) as session:
+        n = _delete_run_cascade(session, run_id)
+        if n == 0:
+            raise HTTPException(404, "Run not found")
+        session.commit()
+    return {"deleted": True, "run_id": run_id}
 
+
+@app.delete("/stars/{star_file_id}")
+def delete_star(star_file_id: int):
+    with Session(engine) as session:
+        star = session.get(StarFile, star_file_id)
+        if not star:
+            raise HTTPException(404, "Star file not found")
+        _delete_starfile_cascade(session, star_file_id)
+        session.commit()
+    return {"deleted": True, "star_file_id": star_file_id}
 # ---- Core prediction logic (shared) ----
 async def _predict_logic(meta: PredictRequest, fits_file: UploadFile) -> Dict[str, Any]:
     if not meta.properties:
