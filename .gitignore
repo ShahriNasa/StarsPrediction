@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+test_log_*.txt
+
+# Test results / runtime artifacts
+pro_3.3/data/
+result/
+monitor_logs/
+
+# Images generated during tests
+*.png
+*.jpg
+*.svg
+
+# Editor / temp files
+.~lock.*
